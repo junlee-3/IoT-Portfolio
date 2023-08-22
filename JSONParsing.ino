@@ -1,12 +1,13 @@
-#include <ESP8266WiFi.h>
-#include <ESP8266HTTPClient.h>
+
+#include <WiFi.h>
 #include <WiFiClient.h>
+#include <HTTPClient.h>
 #include <ArduinoJson.h>
-#include <SPI.h>
+//#include <SPI.h>
 #include <Wire.h>
   
-const char*  ssid = "";
-const char*  password = "";
+const char*  ssid = "#";
+const char*  password = "#";
 
 WiFiServer server(80);
 
@@ -57,12 +58,26 @@ void loop() {
       DynamicJsonDocument parsedJson(1024);
       deserializeJson(parsedJson, response);
 
-      Serial.println(String(parsedJson["daily"]["temperature_2m_max"][0]));
-      maxTemp = String(parsedJson["daily"]["temperature_2m_max"][0]);
-      minTemp = String(parsedJson["daily"]["temperature_2m_min"][0]);
-      wind = String(parsedJson["daily"]["windspeed_10m_max"][0]);
-      rain = String(parsedJson["daily"]["rain_sum"][0]);
-      weatherCode = String(parsedJson["daily"]["weathercode"][0]).toInt();
+      // Assuming parsedJson is your JsonObject
+      String maxTempString = String((const char*)parsedJson["daily"]["temperature_2m_max"][0]);
+      //Serial.println(maxTempString);
+
+      String minTempString = String((const char*)parsedJson["daily"]["temperature_2m_min"][0]);
+      //Serial.println(minTempString);
+
+      maxTempString = String(parsedJson["daily"]["temperature_2m_max"][0].as<float>(), 2);
+      minTempString = String(parsedJson["daily"]["temperature_2m_min"][0].as<float>(), 2);
+
+
+      int weatherCode = parsedJson["daily"]["weathercode"][0];
+      Serial.println(weatherCode);
+
+
+      //maxTemp = String(parsedJson["daily"]["temperature_2m_max"][0]);
+      //minTemp = String(parsedJson["daily"]["temperature_2m_min"][0]);
+      //wind = String(parsedJson["daily"]["windspeed_10m_max"][0]);
+      //rain = String(parsedJson["daily"]["rain_sum"][0]);
+      //weatherCode = String(parsedJson["daily"]["weathercode"][0]).toInt();
 
       if (weatherCode <= 1) {
         weatherState = "sunny";
@@ -77,16 +92,18 @@ void loop() {
       } else {
         weatherState = "[WEATHERCODE_ERROR]";
       }
-     
+    
+    maxTemp = maxTempString;
+    minTemp = minTempString;
     
 
     http.end();
     //delay(2000);
 
-    Serial.println("Weather in Sydney Today");
+    Serial.println("Weather in Canberra Today");
     Serial.println("Today it is " + weatherState);
-    Serial.println("The Maximum Temprature is " + maxTemp);
-    Serial.println("The Minimum Temprature is " + minTemp);
+    Serial.println("The Maximum Temprature is " + maxTemp + "Degrees Celcius");
+    Serial.println("The Minimum Temprature is " + minTemp + "Degrees Celcius");
 
     delay(6000);
 
