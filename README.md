@@ -22,5 +22,6 @@ Some projects for the ESP32s done for a Year 9 Digital Innovation assesment.
 ## 📦Getting Started
 
 1. Download the repistory
-2. Open the .ino files, and change your SSID and Password network credentials
-3. Upload and run
+2. Install all needed libraries and dependancies
+3. Open the .ino files, and change your SSID and Password network credentials
+4. Upload and run
